@@ -26,7 +26,7 @@ export default function App() {
   };
 
   const throttledSave = useRef(
-    throttle((data) => saveAllLists(data), 3600000)
+    throttle((data) => saveAllLists(data), 3600000) // Save at most once/hour
   ).current;
 
   useEffect(() => {
@@ -100,7 +100,7 @@ export default function App() {
 
   const renameCurrentList = () => {
     const newName = prompt("Rename list:", currentListName);
-    if (!newName || newName === currentListName) return;
+    if (!newName || newName === currentListName || lists[newName]) return;
 
     const updated = {
       ...lists,
@@ -110,6 +110,18 @@ export default function App() {
 
     setLists(updated);
     setCurrentListName(newName);
+  };
+
+  const addNewBucket = () => {
+    const name = prompt("Enter name for new bucket:");
+    if (!name) return;
+    const newBucket = {
+      id: crypto.randomUUID(),
+      name,
+      todos: [],
+    };
+    const updated = [...currentBuckets, newBucket];
+    updateBuckets(updated);
   };
 
   return (
@@ -123,8 +135,10 @@ export default function App() {
           value={fontSize}
           onChange={(e) => setFontSize(Number(e.target.value))}
         />
+
         <button onClick={handleManualSave}>💾 Save</button>
         <button onClick={handleExportJson}>📦 Export JSON</button>
+
         <label>
           📥 Import JSON
           <input
@@ -134,7 +148,9 @@ export default function App() {
             style={{ display: "none" }}
           />
         </label>
+
         <button onClick={addNewList}>+ New List</button>
+
         <select
           value={currentListName}
           onChange={(e) => setCurrentListName(e.target.value)}
@@ -145,7 +161,9 @@ export default function App() {
             </option>
           ))}
         </select>
+
         <button onClick={renameCurrentList}>✏ Rename List</button>
+        <button onClick={addNewBucket}>+ Add Bucket</button>
       </div>
 
       <div className={styles.bucketList}>

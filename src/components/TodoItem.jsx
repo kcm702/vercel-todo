@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 
 export default function TodoItem({ todo, bucket, allBuckets, setBuckets }) {
+  const [showMoveDropdown, setShowMoveDropdown] = useState(false);
+  const [selectedBucketId, setSelectedBucketId] = useState("");
+
   const moveItem = (direction) => {
     const index = bucket.todos.findIndex((t) => t.id === todo.id);
     if (
@@ -67,16 +70,9 @@ export default function TodoItem({ todo, bucket, allBuckets, setBuckets }) {
     setBuckets(updatedBuckets);
   };
 
-  const handleMoveTo = () => {
-    const target = prompt(
-      `Move to which bucket?\n${allBuckets
-        .filter((b) => b.id !== bucket.id)
-        .map((b) => b.name)
-        .join("\n")}`
-    );
-    const targetBucket = allBuckets.find(
-      (b) => b.name.toLowerCase() === target?.toLowerCase()
-    );
+  const handleMoveToBucket = () => {
+    if (!selectedBucketId) return;
+    const targetBucket = allBuckets.find((b) => b.id === selectedBucketId);
     if (!targetBucket) return;
 
     const updatedBuckets = allBuckets.map((b) => {
@@ -93,7 +89,11 @@ export default function TodoItem({ todo, bucket, allBuckets, setBuckets }) {
     });
 
     setBuckets(updatedBuckets);
+    setShowMoveDropdown(false);
+    setSelectedBucketId("");
   };
+
+  const availableBuckets = allBuckets.filter((b) => b.id !== bucket.id);
 
   return (
     <div
@@ -106,47 +106,58 @@ export default function TodoItem({ todo, bucket, allBuckets, setBuckets }) {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        flexWrap: "wrap",
       }}
     >
       <span>{todo.text}</span>
       <div style={{ display: "flex", gap: "6px", marginLeft: "auto" }}>
-        {/* ✅ Done (2x width) */}
         <button
           onClick={handleComplete}
           title="Mark Done"
-          style={{
-            minWidth: "48px",
-            fontWeight: "bold",
-          }}
+          style={{ minWidth: "48px", fontWeight: "bold" }}
         >
           ✅
         </button>
 
-        {/* ➡️ Move to another bucket */}
-        <button onClick={handleMoveTo} title="Move to another bucket">
+        <button
+          onClick={() => setShowMoveDropdown(!showMoveDropdown)}
+          title="Move to another bucket"
+        >
           ➡️
         </button>
 
-        {/* ↑ Move Up */}
         <button onClick={() => moveItem("up")} title="Move Up">
           ↑
         </button>
-
-        {/* ↓ Move Down */}
         <button onClick={() => moveItem("down")} title="Move Down">
           ↓
         </button>
-
-        {/* ✎ Edit */}
         <button onClick={handleEdit} title="Edit">
           ✎
         </button>
-
-        {/* ✕ Delete */}
         <button onClick={handleDelete} style={{ color: "red" }} title="Delete">
           ✕
         </button>
       </div>
+
+      {showMoveDropdown && (
+        <div style={{ marginTop: "6px", width: "100%" }}>
+          <select
+            value={selectedBucketId}
+            onChange={(e) => setSelectedBucketId(e.target.value)}
+          >
+            <option value="">-- Select Bucket --</option>
+            {availableBuckets.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
+            ))}
+          </select>
+          <button onClick={handleMoveToBucket} style={{ marginLeft: "6px" }}>
+            Move
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -14,6 +14,13 @@
   margin-top: 10px;
 }
 
+.bucketButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .emptyLine {
-  height: 20px;
+  height: 24px;
+  color: #999;
+  font-style: italic;
 }

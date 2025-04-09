@@ -7,29 +7,37 @@ export default function Bucket({ bucket, allBuckets, setBuckets }) {
   const addTodo = () => {
     const text = prompt("Enter todo:");
     if (text) {
-      const newTodo = { id: uuidv4(), text, createdAt: new Date().toISOString() };
-      const updated = allBuckets.map((b) =>
+      const newTodo = {
+        id: uuidv4(),
+        text,
+        createdAt: new Date().toISOString(),
+      };
+
+      const updatedBuckets = allBuckets.map((b) =>
         b.id === bucket.id ? { ...b, todos: [newTodo, ...b.todos] } : b
       );
-      setBuckets(updated);
+
+      setBuckets(updatedBuckets);
     }
   };
 
   const handleRename = () => {
-    const name = prompt("New bucket name:", bucket.name);
-    if (name) {
-      const updated = allBuckets.map((b) =>
-        b.id === bucket.id ? { ...b, name } : b
+    const newName = prompt("Rename bucket:", bucket.name);
+    if (newName) {
+      const updatedBuckets = allBuckets.map((b) =>
+        b.id === bucket.id ? { ...b, name: newName } : b
       );
-      setBuckets(updated);
+      setBuckets(updatedBuckets);
     }
   };
 
   const handleDeleteBucket = () => {
-    const confirmDelete = window.confirm(`Delete bucket "${bucket.name}"?`);
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete the bucket "${bucket.name}"? All items in it will be removed.`
+    );
     if (confirmDelete) {
-      const updated = allBuckets.filter((b) => b.id !== bucket.id);
-      setBuckets(updated);
+      const updatedBuckets = allBuckets.filter((b) => b.id !== bucket.id);
+      setBuckets(updatedBuckets);
     }
   };
 
@@ -37,12 +45,15 @@ export default function Bucket({ bucket, allBuckets, setBuckets }) {
     <div className={styles.bucket}>
       <div className={styles.header}>
         <h3>{bucket.name}</h3>
-        <div>
+        <div className={styles.bucketButtons}>
           <button onClick={handleRename}>Rename</button>
           <button onClick={addTodo}>+ Add</button>
-          <button onClick={handleDeleteBucket} style={{ color: "red" }}>🗑</button>
+          <button onClick={handleDeleteBucket} style={{ color: "red" }}>
+            🗑
+          </button>
         </div>
       </div>
+
       <div className={styles.todoList}>
         {bucket.todos.length === 0 ? (
           <div className={styles.emptyLine}>&nbsp;</div>
@@ -52,6 +63,7 @@ export default function Bucket({ bucket, allBuckets, setBuckets }) {
               key={todo.id}
               todo={todo}
               bucket={bucket}
+              bucketIndex={index}
               allBuckets={allBuckets}
               setBuckets={setBuckets}
             />
