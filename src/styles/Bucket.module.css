@@ -1,0 +1,19 @@
+.bucket {
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.todoList {
+  margin-top: 10px;
+}
+
+.emptyLine {
+  height: 20px;
+}

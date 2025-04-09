@@ -1,0 +1,16 @@
+.app {
+  padding: 20px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.bucketList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
